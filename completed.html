@@ -1,0 +1,150 @@
+<!-- COMPLETED TASKS PAGE -->
+<!DOCTYPE html> <!-- Declares the document as an HTML5 document -->
+<html lang="en"> <!-- Opens the HTML document and sets language to English -->
+<head>
+  <meta charset="UTF-8" /> <!-- Sets character encoding to UTF-8 for supporting all characters -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Ensures responsive design on all devices -->
+  <title>ZAR To Do - Completed Tasks</title> <!-- Sets the title shown in the browser tab -->
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Adds Bootstrap styles for layout and components -->
+
+  <!-- Embedded CSS for styling the page -->
+  <style>
+    /* Set full height and no margin for body and html */
+    body, html {
+      height: 100%;
+      margin: 0;
+      background-color: #0f0f0f; /* Dark background */
+      color: white; /* White text */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Smooth font */
+    }
+
+    /* Center content vertically and horizontally */
+    .full-center {
+      min-height: 100vh; /* Full viewport height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 80px; /* Leave space for bottom nav bar */
+    }
+
+    /* Box that holds all completed tasks */
+    .task-box {
+      background-color: #1a1a1a; /* Dark grey box */
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); /* Purple glow */
+      width: 100%;
+      max-width: 600px; /* Limit width */
+    }
+
+    /* Heading style */
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Style for each completed task */
+    .task {
+      background-color: #2c2c2c; /* Slightly lighter grey */
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); /* Purple glow again */
+      display: flex;
+      justify-content: space-between; /* Title on one side, status on the other */
+      align-items: center;
+      flex-wrap: wrap; /* Allows wrapping on small screens */
+    }
+
+    /* Label text style */
+    .status-label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #aaa; /* Light gray */
+    }
+
+    /* Style for "completed" label */
+    .status-completed {
+      color: #00ff99; /* Neon green for completed status */
+    }
+
+    /* Styling for bottom navbar buttons */
+    .nav-btn {
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+      border-radius: 30px; /* Rounded buttons */
+    }
+
+    /* On hover, scale and glow the buttons */
+    .nav-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #7f00ff, 0 0 20px #7f00ff; /* Purple glow */
+    }
+
+    /* Add top shadow to navbar */
+    .navbar {
+      box-shadow: 0 -1px 10px rgba(127, 0, 255, 0.3); /* Subtle purple glow on top of navbar */
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Main content wrapper -->
+  <div class="full-center">
+    <div class="task-box">
+      <h2>✅ ZAR To Do - Completed Tasks</h2> <!-- Title -->
+      <div id="taskList"></div> <!-- Container for listing completed tasks dynamically -->
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary">
+    <div class="container-fluid d-flex justify-content-around">
+      <!-- Navigation buttons to different pages -->
+      <a href="dashboard.html" class="btn btn-outline-light nav-btn">Dashboard</a>
+      <a href="add.html" class="btn btn-outline-light nav-btn">Add Task</a>
+      <a href="all.html" class="btn btn-outline-light nav-btn">All</a>
+      <a href="pending.html" class="btn btn-outline-light nav-btn">Pending</a>
+      <a href="completed.html" class="btn btn-outline-light nav-btn">Completed</a>
+    </div>
+  </nav>
+
+  <!-- jQuery library from CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- JavaScript to load completed tasks from local storage -->
+  <script>
+    function loadCompletedTasks() {
+      let taskList = $('#taskList'); // Select the div where tasks will be shown
+      taskList.empty(); // Clear any existing tasks
+
+      // Retrieve tasks from local storage, or set as empty array if none
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+      // Filter only the completed tasks
+      let completedTasks = tasks.filter(task => task.status === "completed");
+
+      // Loop through completed tasks and add them to the page
+      completedTasks.forEach(function(task) {
+        let taskItem = `<div class="task">
+                          <span>${task.title}</span>
+                          <span class="status-label status-completed">[${task.status}]</span>
+                        </div>`;
+        taskList.append(taskItem); // Add each task to the taskList div
+      });
+
+      // If no completed tasks, show message
+      if (completedTasks.length === 0) {
+        taskList.append('<p>No completed tasks found.</p>');
+      }
+    }
+
+    // When the page is ready, load the completed tasks
+    $(document).ready(function () {
+      loadCompletedTasks();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!-- Declares the HTML5 document type -->
+<!DOCTYPE html>
+
+<!-- Opens HTML document and sets the language to English -->
+<html lang="en">
+
+<head>
+  <!-- Declares the character encoding as UTF-8 -->
+  <meta charset="UTF-8" />
+
+  <!-- Makes the website responsive on all screen sizes -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Sets the title of the tab in the browser -->
+  <title>ZAR To Do - Add Task</title>
+
+  <!-- Links to Bootstrap 5 CSS from a CDN (Content Delivery Network) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Custom CSS styles inside the page -->
+  <style>
+    /* Applies full height, removes margin, sets black background and white text */
+    body, html {
+      height: 100%;
+      margin: 0;
+      background-color: #0f0f0f;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Makes the container centered both vertically and horizontally */
+    .full-center {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 80px; /* Leaves space at the bottom for navbar */
+    }
+
+    /* Styles the box containing the task form */
+    .task-form-box {
+      background-color: #1a1a1a; /* Dark gray background */
+      padding: 30px;              /* Space inside the box */
+      border-radius: 25px;        /* Rounded corners */
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); /* Purple glow effect */
+      width: 100%;                /* Takes full width available */
+      max-width: 500px;           /* But not more than 500px */
+    }
+
+    /* Styles the heading inside the form box */
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Adds margin above the form labels */
+    label {
+      margin-top: 10px;
+    }
+
+    /* Custom styles for the submit button */
+    .btn-custom {
+      background-color: #3f005abd;                   /* Purple background */
+      color: white;                                  /* White text */
+      border: none;                                  /* Removes default border */
+      border-radius: 12px;                           /* Rounded corners */
+      padding: 10px 20px;                            /* Padding inside the button */
+      margin-top: 20px;                              /* Space above the button */
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);    /* Purple glow shadow */
+    }
+
+    /* Adds hover effect for the submit button */
+    .btn-custom:hover {
+      background-color: #ae00ffca;                   /* Brighter purple */
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.6);    /* Stronger glow */
+    }
+
+    /* Styles for navigation buttons in navbar */
+    .nav-btn {
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
+      border-radius: 30px;                                   /* Rounded buttons */
+    }
+
+    /* On hover, the nav buttons will glow and bounce slightly */
+    .nav-btn:hover {
+      transform: scale(1.1);                                /* Slightly increase size */
+      box-shadow: 0 0 10px #7f00ff, 0 0 20px #7f00ff;        /* Purple glow */
+    }
+
+    /* Adds purple glow to navbar shadow */
+    .navbar {
+      box-shadow: 0 -1px 10px rgba(127, 0, 255, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- This is the main container that holds the form in center -->
+  <div class="full-center">
+    <!-- This is the card/box for the form input -->
+    <div class="task-form-box">
+      <!-- Heading for the form -->
+      <h2>➕ ZAR To Do - Add New Task</h2>
+
+      <!-- The form to input task title -->
+      <form id="taskForm">
+        <!-- Group for input label and input field -->
+        <div class="form-group">
+          <!-- Label for task title -->
+          <label for="title">Task Title:</label>
+          <!-- Input field for entering task title -->
+          <input type="text" class="form-control" id="title" required />
+        </div>
+
+        <!-- Submit button to add task -->
+        <button type="submit" class="btn btn-custom w-100">Add Task</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fixed navigation bar at bottom of the screen -->
+  <nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary">
+    <div class="container-fluid d-flex justify-content-around">
+      <!-- Navigation link to Dashboard -->
+      <a href="dashboard.html" class="btn btn-outline-light nav-btn">Dashboard</a>
+      <!-- Navigation link to Add Task (current page) -->
+      <a href="add.html" class="btn btn-outline-light nav-btn">Add Task</a>
+      <!-- Navigation link to All Tasks page -->
+      <a href="all.html" class="btn btn-outline-light nav-btn">All</a>
+      <!-- Navigation link to Pending Tasks page -->
+      <a href="pending.html" class="btn btn-outline-light nav-btn">Pending</a>
+      <!-- Navigation link to Completed Tasks page -->
+      <a href="completed.html" class="btn btn-outline-light nav-btn">Completed</a>
+    </div>
+  </nav>
+
+  <!-- Loads jQuery library from CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Script to handle task form submission -->
+  <script>
+    // Runs this block when the page is fully loaded
+    $(document).ready(function () {
+      // When the form is submitted
+      $('#taskForm').submit(function (e) {
+        e.preventDefault(); // Prevents page reload on form submit
+
+        // Get the task title input value and trim extra spaces
+        let title = $('#title').val().trim();
+
+        // If title is empty, do not continue
+        if (!title) return;
+
+        // Create a new task object
+        let newTask = {
+          title: title, // Store the input title
+          status: 'pending', // Set status as 'pending' by default
+          createdAt: new Date().toISOString() // Store creation date
+        };
+
+        // Get existing tasks from localStorage or empty array if none
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        // Add the new task to the array
+        tasks.push(newTask);
+
+        // Save the updated task list back to localStorage
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+
+        // Clear the input field after submission
+        $('#title').val('');
+
+        // Show success message
+        alert('Task added successfully!');
+      });
+    });
+  </script>
+</body>
+</html>

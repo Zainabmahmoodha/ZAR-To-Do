@@ -1,0 +1,172 @@
+<!-- PENDING TASKS PAGE -->
+<!DOCTYPE html> <!-- Declares the document as HTML5 -->
+
+<html lang="en"> <!-- Root HTML element with language set to English -->
+
+<head>
+  <meta charset="UTF-8" /> <!-- Sets character encoding to UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Makes the site responsive on all screen sizes -->
+  <title>ZAR To Do - Pending Tasks</title> <!-- Title shown in browser tab -->
+
+  <!-- Bootstrap CSS for styling and layout -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Custom styles for the page -->
+  <style>
+    /* Full height, no margin, dark background, white text, and a clean font */
+    body, html {
+      height: 100%;
+      margin: 0;
+      background-color: #0f0f0f;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Flexbox container to center the content */
+    .full-center {
+      min-height: 100vh; /* Minimum height = full screen */
+      display: flex; /* Use flexbox */
+      align-items: center; /* Vertically center */
+      justify-content: center; /* Horizontally center */
+      padding-bottom: 80px; /* Prevent overlap with bottom navbar */
+    }
+
+    /* Styling for the task container box */
+    .task-box {
+      background-color: #1a1a1a; /* Dark background */
+      padding: 30px; /* Inner padding */
+      border-radius: 25px; /* Rounded corners */
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); /* Purple glow effect */
+      width: 100%; /* Full width on smaller screens */
+      max-width: 600px; /* But not more than 600px */
+    }
+
+    /* Heading style */
+    h2 {
+      text-align: center; /* Centered title */
+      margin-bottom: 20px; /* Space below title */
+    }
+
+    /* Style for each task item */
+    .task {
+      background-color: #2c2c2c; /* Darker background for task */
+      padding: 15px; /* Inner spacing */
+      border-radius: 12px; /* Rounded corners */
+      margin-bottom: 10px; /* Space between tasks */
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.1); /* Soft purple glow */
+    }
+
+    /* Style for the status label shown on right */
+    .status-label {
+      font-size: 0.9rem; /* Slightly smaller font */
+      font-weight: bold;
+      float: right; /* Push to right side */
+      color: #aaa; /* Light gray color */
+    }
+
+    /* Yellow color for "pending" status */
+    .status-pending {
+      color: #ffcc00;
+    }
+
+    /* Style for overdue warning message */
+    .overdue-message {
+      color: #ff6666; /* Red text for warning */
+      font-size: 0.85rem; /* Smaller font */
+      margin-top: 5px; /* Spacing above */
+    }
+
+    /* Navigation button style */
+    .nav-btn {
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
+      border-radius: 30px; /* Rounded buttons */
+    }
+
+    /* Glow effect on nav button hover */
+    .nav-btn:hover {
+      transform: scale(1.1); /* Slight zoom */
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); /* Purple glow */
+    }
+
+    /* Purple glow for the navbar */
+    .navbar {
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Main container to hold the pending tasks -->
+  <div class="full-center">
+    <!-- Box to contain all pending task elements -->
+    <div class="task-box">
+      <!-- Page title -->
+      <h2>🕒 ZAR To Do - Pending Tasks</h2>
+      <!-- Empty div where tasks will be added dynamically -->
+      <div id="taskList"></div>
+    </div>
+  </div>
+
+  <!-- Fixed bottom navbar for navigating between pages -->
+  <nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary">
+    <div class="container-fluid d-flex justify-content-around">
+      <!-- Navigation buttons -->
+      <a href="dashboard.html" class="btn btn-outline-light nav-btn">Dashboard</a>
+      <a href="add.html" class="btn btn-outline-light nav-btn">Add Task</a>
+      <a href="all.html" class="btn btn-outline-light nav-btn">All</a>
+      <a href="pending.html" class="btn btn-outline-light nav-btn">Pending</a>
+      <a href="completed.html" class="btn btn-outline-light nav-btn">Completed</a>
+    </div>
+  </nav>
+
+  <!-- jQuery CDN for JavaScript functionality -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Script to load pending tasks -->
+  <script>
+    // Function to load only pending tasks from localStorage
+    function loadPendingTasks() {
+      let taskList = $('#taskList'); // Select the container
+      taskList.empty(); // Clear any previous content
+
+      // Get all tasks from localStorage or return empty array
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+      // Filter only tasks with status 'pending'
+      let pendingTasks = tasks.filter(task => task.status === "pending");
+
+      // Loop through each pending task
+      pendingTasks.forEach(function(task) {
+        let taskCreated = new Date(task.createdAt); // Convert task's createdAt string to Date
+        let now = new Date(); // Get current time
+        let timeDiff = Math.floor((now - taskCreated) / (1000 * 60 * 60 * 24)); // Difference in days
+
+        // If task is older than 2 days, show warning
+        let overdueMessage = timeDiff >= 2
+          ? `<div class="overdue-message">⚠️ This task has been pending for over 2 days!</div>`
+          : "";
+
+        // Create HTML for the task
+        let taskItem = `<div class="task">
+                          ${task.title} <!-- Task title text -->
+                          <span class="status-label status-pending">[${task.status}]</span>
+                          ${overdueMessage} <!-- Warning message if needed -->
+                        </div>`;
+
+        // Append task item to the list
+        taskList.append(taskItem);
+      });
+
+      // If no pending tasks are found, show fallback text
+      if (pendingTasks.length === 0) {
+        taskList.append('<p>No pending tasks found.</p>');
+      }
+    }
+
+    // When document is ready, call the function to load tasks
+    $(document).ready(function () {
+      loadPendingTasks();
+    });
+  </script>
+</body>
+</html>
